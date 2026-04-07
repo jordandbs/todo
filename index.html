@@ -41,7 +41,6 @@
       padding-bottom: calc(var(--safe-bottom) + 80px);
     }
 
-    /* Background orbs */
     .bg-orb {
       position: fixed;
       border-radius: 50%;
@@ -68,17 +67,13 @@
       padding: 0 20px;
     }
 
-    /* Header */
-    .header {
-      padding: 28px 0 24px;
-    }
+    .header { padding: 28px 0 24px; }
     .header-top {
       display: flex;
       justify-content: space-between;
       align-items: flex-start;
     }
     .greeting {
-      font-family: 'DM Sans', sans-serif;
       font-size: 13px;
       font-weight: 400;
       color: var(--muted);
@@ -123,12 +118,7 @@
       letter-spacing: 0.1em;
     }
 
-    /* Stats strip */
-    .stats {
-      display: flex;
-      gap: 10px;
-      margin: 16px 0 24px;
-    }
+    .stats { display: flex; gap: 10px; margin: 16px 0 24px; }
     .stat {
       flex: 1;
       background: var(--surface);
@@ -144,14 +134,8 @@
     }
     .stat-num.accent { color: var(--accent); }
     .stat-num.muted { color: var(--muted); }
-    .stat-label {
-      font-size: 11px;
-      color: var(--muted);
-      text-transform: uppercase;
-      letter-spacing: 0.08em;
-    }
+    .stat-label { font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.08em; }
 
-    /* Progress bar */
     .progress-wrap {
       background: var(--surface);
       border: 1px solid var(--border);
@@ -165,23 +149,9 @@
       align-items: center;
       margin-bottom: 10px;
     }
-    .progress-label {
-      font-size: 12px;
-      color: var(--muted);
-      text-transform: uppercase;
-      letter-spacing: 0.08em;
-    }
-    .progress-pct {
-      font-family: 'DM Serif Display', serif;
-      font-size: 16px;
-      color: var(--accent);
-    }
-    .progress-bar {
-      height: 6px;
-      background: var(--surface2);
-      border-radius: 99px;
-      overflow: hidden;
-    }
+    .progress-label { font-size: 12px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.08em; }
+    .progress-pct { font-family: 'DM Serif Display', serif; font-size: 16px; color: var(--accent); }
+    .progress-bar { height: 6px; background: var(--surface2); border-radius: 99px; overflow: hidden; }
     .progress-fill {
       height: 100%;
       background: linear-gradient(90deg, var(--accent2) 0%, var(--accent) 100%);
@@ -189,11 +159,7 @@
       transition: width 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
     }
 
-    /* Input area */
-    .input-wrap {
-      position: relative;
-      margin-bottom: 28px;
-    }
+    .input-wrap { position: relative; margin-bottom: 28px; }
     .task-input {
       width: 100%;
       background: var(--surface);
@@ -224,18 +190,14 @@
       cursor: pointer;
       display: flex; align-items: center; justify-content: center;
       transition: transform 0.15s, background 0.15s;
+      -webkit-appearance: none;
     }
     .add-btn:active { transform: translateY(-50%) scale(0.9); }
     .add-btn svg { color: #0a0a0f; }
 
-    /* Filter tabs */
     .filters {
-      display: flex;
-      gap: 8px;
-      margin-bottom: 20px;
-      overflow-x: auto;
-      scrollbar-width: none;
-      -webkit-overflow-scrolling: touch;
+      display: flex; gap: 8px; margin-bottom: 20px;
+      overflow-x: auto; scrollbar-width: none; -webkit-overflow-scrolling: touch;
     }
     .filters::-webkit-scrollbar { display: none; }
     .filter-btn {
@@ -245,26 +207,17 @@
       border: 1px solid var(--border);
       background: transparent;
       font-family: 'DM Sans', sans-serif;
-      font-size: 13px;
-      font-weight: 500;
+      font-size: 13px; font-weight: 500;
       color: var(--muted);
       cursor: pointer;
       transition: all 0.2s;
       -webkit-appearance: none;
     }
-    .filter-btn.active {
-      background: var(--accent);
-      border-color: var(--accent);
-      color: #0a0a0f;
-    }
+    .filter-btn.active { background: var(--accent); border-color: var(--accent); color: #0a0a0f; }
 
-    /* Category selector */
     .category-bar {
-      display: flex;
-      gap: 8px;
-      margin-bottom: 20px;
-      overflow-x: auto;
-      scrollbar-width: none;
+      display: flex; gap: 8px; margin-bottom: 20px;
+      overflow-x: auto; scrollbar-width: none;
     }
     .category-bar::-webkit-scrollbar { display: none; }
     .cat-chip {
@@ -273,30 +226,20 @@
       border-radius: 99px;
       border: 1px solid var(--border);
       background: transparent;
-      font-size: 12px;
-      color: var(--muted);
+      font-family: 'DM Sans', sans-serif;
+      font-size: 12px; color: var(--muted);
       cursor: pointer;
       transition: all 0.2s;
       display: flex; align-items: center; gap: 5px;
       -webkit-appearance: none;
     }
-    .cat-chip.selected {
-      background: var(--surface2);
-      border-color: rgba(255,255,255,0.15);
-      color: var(--text);
-    }
+    .cat-chip.selected { background: var(--surface2); border-color: rgba(255,255,255,0.15); color: var(--text); }
 
-    /* Section label */
     .section-label {
-      font-size: 11px;
-      font-weight: 500;
-      color: var(--muted);
-      text-transform: uppercase;
-      letter-spacing: 0.12em;
-      margin-bottom: 12px;
+      font-size: 11px; font-weight: 500; color: var(--muted);
+      text-transform: uppercase; letter-spacing: 0.12em; margin-bottom: 12px;
     }
 
-    /* Task list */
     .tasks { display: flex; flex-direction: column; gap: 10px; }
 
     .task-item {
@@ -304,9 +247,7 @@
       border: 1px solid var(--border);
       border-radius: var(--radius);
       padding: 16px 18px;
-      display: flex;
-      align-items: center;
-      gap: 14px;
+      display: flex; align-items: center; gap: 14px;
       transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
       cursor: pointer;
       -webkit-tap-highlight-color: transparent;
@@ -316,13 +257,8 @@
       from { opacity: 0; transform: translateY(10px) scale(0.97); }
       to { opacity: 1; transform: translateY(0) scale(1); }
     }
-    .task-item.done {
-      opacity: 0.5;
-    }
-    .task-item.done .task-text {
-      text-decoration: line-through;
-      color: var(--muted);
-    }
+    .task-item.done { opacity: 0.5; }
+    .task-item.done .task-text { text-decoration: line-through; color: var(--muted); }
 
     .check-ring {
       flex-shrink: 0;
@@ -333,85 +269,38 @@
       transition: all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
       background: transparent;
     }
-    .task-item.done .check-ring {
-      background: var(--accent);
-      border-color: var(--accent);
-    }
+    .task-item.done .check-ring { background: var(--accent); border-color: var(--accent); }
     .check-ring svg { opacity: 0; transition: opacity 0.2s; }
     .task-item.done .check-ring svg { opacity: 1; }
 
     .task-body { flex: 1; min-width: 0; }
     .task-text {
-      font-size: 15px;
-      font-weight: 400;
-      color: var(--text);
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
+      font-size: 15px; font-weight: 400; color: var(--text);
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
       transition: color 0.2s;
     }
-    .task-meta {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      margin-top: 4px;
-    }
-    .task-cat {
-      font-size: 11px;
-      color: var(--muted);
-      display: flex; align-items: center; gap: 3px;
-    }
-    .task-time {
-      font-size: 11px;
-      color: var(--muted);
-    }
-    .cat-dot {
-      width: 6px; height: 6px;
-      border-radius: 50%;
-      display: inline-block;
-    }
+    .task-meta { display: flex; align-items: center; gap: 8px; margin-top: 4px; }
+    .task-cat { font-size: 11px; color: var(--muted); display: flex; align-items: center; gap: 3px; }
+    .task-time { font-size: 11px; color: var(--muted); }
+    .cat-dot { width: 6px; height: 6px; border-radius: 50%; display: inline-block; }
 
     .delete-btn {
       flex-shrink: 0;
       width: 32px; height: 32px;
-      border: none;
-      background: transparent;
-      color: var(--muted);
-      cursor: pointer;
+      border: none; background: transparent;
+      color: var(--muted); cursor: pointer;
       display: flex; align-items: center; justify-content: center;
-      border-radius: 8px;
-      transition: all 0.2s;
-      -webkit-appearance: none;
-      padding: 0;
+      border-radius: 8px; transition: all 0.2s;
+      -webkit-appearance: none; padding: 0;
     }
-    .delete-btn:active {
-      background: rgba(255,77,109,0.15);
-      color: var(--danger);
-    }
+    .delete-btn:active { background: rgba(255,77,109,0.15); color: var(--danger); }
 
-    /* Empty state */
-    .empty {
-      text-align: center;
-      padding: 50px 20px;
-      display: none;
-    }
+    .empty { text-align: center; padding: 50px 20px; display: none; }
     .empty.visible { display: block; }
-    .empty-icon {
-      font-size: 48px;
-      margin-bottom: 12px;
-    }
-    .empty-text {
-      font-family: 'DM Serif Display', serif;
-      font-size: 22px;
-      color: var(--text);
-      margin-bottom: 6px;
-    }
-    .empty-sub {
-      font-size: 14px;
-      color: var(--muted);
-    }
+    .empty-icon { font-size: 48px; margin-bottom: 12px; }
+    .empty-text { font-family: 'DM Serif Display', serif; font-size: 22px; color: var(--text); margin-bottom: 6px; }
+    .empty-sub { font-size: 14px; color: var(--muted); }
 
-    /* Bottom nav */
     .bottom-nav {
       position: fixed;
       bottom: 0; left: 0; right: 0;
@@ -420,116 +309,66 @@
       backdrop-filter: blur(20px);
       -webkit-backdrop-filter: blur(20px);
       border-top: 1px solid var(--border);
-      display: flex;
-      justify-content: space-around;
+      display: flex; justify-content: space-around;
       z-index: 100;
     }
     .nav-item {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 4px;
-      cursor: pointer;
-      color: var(--muted);
-      font-size: 11px;
-      transition: color 0.2s;
-      -webkit-tap-highlight-color: transparent;
+      display: flex; flex-direction: column; align-items: center; gap: 4px;
+      cursor: pointer; color: var(--muted); font-size: 11px;
+      transition: color 0.2s; -webkit-tap-highlight-color: transparent;
     }
     .nav-item.active { color: var(--accent); }
 
-    /* Install banner */
-    .install-banner {
-      position: fixed;
-      top: calc(var(--safe-top) + 10px);
-      left: 16px; right: 16px;
-      background: var(--surface2);
-      border: 1px solid rgba(200,240,100,0.3);
-      border-radius: 18px;
-      padding: 14px 18px;
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      z-index: 200;
-      box-shadow: 0 8px 32px rgba(0,0,0,0.4);
-      animation: slideDown 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
-    }
-    @keyframes slideDown {
-      from { opacity: 0; transform: translateY(-20px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-    .install-banner.hidden { display: none; }
-    .install-text { flex: 1; font-size: 13px; color: var(--text); line-height: 1.4; }
-    .install-text strong { color: var(--accent); }
-    .install-close {
-      background: none; border: none;
-      color: var(--muted); font-size: 18px;
-      cursor: pointer; padding: 0;
-      -webkit-appearance: none;
-    }
-
     /* Widget preview */
-    .widget-section {
-      margin-top: 32px;
-      padding-bottom: 10px;
-    }
+    .widget-section { margin-top: 32px; padding-bottom: 10px; }
     .widget-preview {
       background: linear-gradient(135deg, #1c1c28 0%, #13131a 100%);
       border: 1px solid var(--border);
-      border-radius: 24px;
-      padding: 20px;
-      position: relative;
-      overflow: hidden;
+      border-radius: 24px; padding: 20px;
+      position: relative; overflow: hidden;
     }
     .widget-preview::before {
       content: '';
-      position: absolute;
-      top: -40px; right: -40px;
+      position: absolute; top: -40px; right: -40px;
       width: 120px; height: 120px;
       background: radial-gradient(circle, rgba(123,97,255,0.25) 0%, transparent 70%);
       border-radius: 50%;
     }
-    .widget-title {
-      font-family: 'DM Serif Display', serif;
-      font-size: 18px;
-      margin-bottom: 12px;
-    }
+    .widget-title { font-family: 'DM Serif Display', serif; font-size: 18px; margin-bottom: 12px; }
     .widget-tasks { display: flex; flex-direction: column; gap: 8px; }
-    .widget-task {
-      display: flex; align-items: center; gap: 10px;
-      font-size: 13px;
-      color: var(--text);
-    }
+    .widget-task { display: flex; align-items: center; gap: 10px; font-size: 13px; color: var(--text); }
     .widget-task.done-task { color: var(--muted); text-decoration: line-through; }
-    .w-dot {
-      width: 8px; height: 8px; border-radius: 50%;
-      flex-shrink: 0;
-    }
-    .widget-footer {
-      margin-top: 14px;
-      font-size: 11px;
+    .w-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+    .widget-footer { margin-top: 14px; font-size: 11px; color: var(--muted); text-align: right; }
+
+    /* Widget info box */
+    .widget-info {
+      margin-top: 16px;
+      background: var(--surface);
+      border: 1px solid rgba(123,97,255,0.3);
+      border-radius: 16px;
+      padding: 16px 18px;
+      font-size: 13px;
       color: var(--muted);
-      text-align: right;
+      line-height: 1.6;
+    }
+    .widget-info strong { color: var(--accent); }
+    .widget-info code {
+      background: var(--surface2);
+      border-radius: 6px;
+      padding: 2px 7px;
+      font-family: monospace;
+      font-size: 12px;
+      color: var(--text);
     }
   </style>
 </head>
 <body>
 
-<!-- Background -->
 <div class="bg-orb bg-orb-1"></div>
 <div class="bg-orb bg-orb-2"></div>
 
-<!-- Install banner (iOS hint) -->
-<div class="install-banner" id="installBanner">
-  <span style="font-size:22px">📲</span>
-  <div class="install-text">
-    <strong>Ajouter à l'écran d'accueil</strong><br>
-    Tap <strong>⎙ Partager</strong> puis « Sur l'écran d'accueil »
-  </div>
-  <button class="install-close" onclick="document.getElementById('installBanner').classList.add('hidden')">✕</button>
-</div>
-
 <div class="app">
-  <!-- Header -->
   <div class="header">
     <div class="header-top">
       <div>
@@ -543,7 +382,6 @@
     </div>
   </div>
 
-  <!-- Stats -->
   <div class="stats">
     <div class="stat">
       <div class="stat-num accent" id="statTotal">0</div>
@@ -559,7 +397,6 @@
     </div>
   </div>
 
-  <!-- Progress -->
   <div class="progress-wrap">
     <div class="progress-header">
       <span class="progress-label">Progression du jour</span>
@@ -570,42 +407,35 @@
     </div>
   </div>
 
-  <!-- Input -->
   <div class="input-wrap">
     <input type="text" class="task-input" id="taskInput"
       placeholder="Ajouter une tâche…" maxlength="80"
       autocomplete="off" autocorrect="off" spellcheck="false" />
-    <button class="add-btn" id="addBtn" onclick="addTask()">
+    <button class="add-btn" id="addBtn" type="button">
       <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
         <line x1="9" y1="2" x2="9" y2="16"/><line x1="2" y1="9" x2="16" y2="9"/>
       </svg>
     </button>
   </div>
 
-  <!-- Category selector -->
   <div class="category-bar" id="catBar"></div>
 
-  <!-- Filters -->
-  <div class="filters">
-    <button class="filter-btn active" onclick="setFilter('all', this)">Toutes</button>
-    <button class="filter-btn" onclick="setFilter('active', this)">À faire</button>
-    <button class="filter-btn" onclick="setFilter('done', this)">Terminées</button>
+  <div class="filters" id="filterBar">
+    <button class="filter-btn active" data-filter="all">Toutes</button>
+    <button class="filter-btn" data-filter="active">À faire</button>
+    <button class="filter-btn" data-filter="done">Terminées</button>
   </div>
 
-  <!-- Section label -->
   <div class="section-label" id="sectionLabel">Aujourd'hui</div>
 
-  <!-- Tasks -->
   <div class="tasks" id="taskList"></div>
 
-  <!-- Empty state -->
   <div class="empty" id="emptyState">
     <div class="empty-icon">✦</div>
     <div class="empty-text">Tout est fait !</div>
     <div class="empty-sub">Ajoutez une tâche pour commencer</div>
   </div>
 
-  <!-- Widget preview section -->
   <div class="widget-section">
     <div class="section-label" style="margin-bottom:14px">Aperçu widget</div>
     <div class="widget-preview">
@@ -613,25 +443,26 @@
       <div class="widget-tasks" id="widgetTasks"></div>
       <div class="widget-footer" id="widgetFooter">— tâches restantes</div>
     </div>
+    <div class="widget-info">
+      <strong>Widget iOS natif</strong> — Non disponible via PWA.<br>
+      Pour un vrai widget : installe <strong>Scriptable</strong> (App Store, gratuit),
+      puis copie le code généré via le bouton ci-dessous dans un nouveau script Scriptable.
+      <br><br>
+      <button id="copyScriptableBtn" type="button" style="background:var(--accent2);border:none;color:#fff;border-radius:10px;padding:8px 16px;font-family:'DM Sans',sans-serif;font-size:13px;cursor:pointer;margin-top:4px;">
+        📋 Copier le script Scriptable
+      </button>
+    </div>
   </div>
 </div>
 
-<!-- Bottom Nav -->
 <div class="bottom-nav">
-  <div class="nav-item active">
+  <div class="nav-item active" id="navList">
     <svg width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
       <path d="M9 11l2 2 4-4"/><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M16 3v4M8 3v4M3 9h18"/>
     </svg>
     Liste
   </div>
-  <div class="nav-item" onclick="showInstallHelp()">
-    <svg width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-      <rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/>
-      <rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/>
-    </svg>
-    Widget
-  </div>
-  <div class="nav-item" onclick="clearDone()">
+  <div class="nav-item" id="navClear">
     <svg width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
       <polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6"/>
       <path d="M10 11v6M14 11v6"/><path d="M9 6V4a1 1 0 011-1h4a1 1 0 011 1v2"/>
@@ -643,14 +474,15 @@
 <script>
   // ── State ──────────────────────────────────────────────────────────────────
   const CATEGORIES = [
-    { id: 'all',      label: '✦ Tout',     color: '#c8f064' },
-    { id: 'perso',    label: '🏠 Perso',   color: '#7b61ff' },
-    { id: 'travail',  label: '💼 Travail',  color: '#ff9f43' },
-    { id: 'courses',  label: '🛒 Courses', color: '#54d4a0' },
-    { id: 'sante',    label: '❤️ Santé',   color: '#ff4d6d' },
+    { id: 'all',     label: '✦ Tout',    color: '#c8f064' },
+    { id: 'perso',   label: '🏠 Perso',  color: '#7b61ff' },
+    { id: 'travail', label: '💼 Travail', color: '#ff9f43' },
+    { id: 'courses', label: '🛒 Courses', color: '#54d4a0' },
+    { id: 'sante',   label: '❤️ Santé',  color: '#ff4d6d' },
   ];
 
-  let tasks = JSON.parse(localStorage.getItem('pwa_tasks') || '[]');
+  let tasks = [];
+  try { tasks = JSON.parse(localStorage.getItem('pwa_tasks') || '[]'); } catch(e) {}
   let filter = 'all';
   let activeCat = 'all';
 
@@ -664,22 +496,29 @@
     now.toLocaleDateString('fr-FR', { month: 'short' }).toUpperCase();
 
   // ── Persist ────────────────────────────────────────────────────────────────
-  function save() { localStorage.setItem('pwa_tasks', JSON.stringify(tasks)); }
+  function save() {
+    try { localStorage.setItem('pwa_tasks', JSON.stringify(tasks)); } catch(e) {}
+  }
 
-  // ── Build category bar ────────────────────────────────────────────────────
+  // ── Escape HTML ───────────────────────────────────────────────────────────
+  function escHtml(s) {
+    return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  }
+
+  // ── Category bar ──────────────────────────────────────────────────────────
   function buildCatBar() {
     const bar = document.getElementById('catBar');
     bar.innerHTML = CATEGORIES.map(c => `
-      <button class="cat-chip ${activeCat === c.id ? 'selected' : ''}"
-        onclick="setCategory('${c.id}')">
+      <button class="cat-chip ${activeCat === c.id ? 'selected' : ''}" data-cat="${c.id}">
         <span class="cat-dot" style="background:${c.color}"></span>${c.label}
       </button>`).join('');
-  }
-
-  function setCategory(id) {
-    activeCat = id;
-    buildCatBar();
-    renderTasks();
+    bar.querySelectorAll('.cat-chip').forEach(btn => {
+      btn.addEventListener('click', () => {
+        activeCat = btn.dataset.cat;
+        buildCatBar();
+        renderTasks();
+      });
+    });
   }
 
   // ── Render ─────────────────────────────────────────────────────────────────
@@ -689,21 +528,21 @@
 
     let visible = tasks.filter(t => {
       if (filter === 'active') return !t.done;
-      if (filter === 'done') return t.done;
+      if (filter === 'done')   return t.done;
       return true;
     });
     if (activeCat !== 'all') visible = visible.filter(t => t.cat === activeCat);
 
     list.innerHTML = visible.map(t => {
-      const cat = CATEGORIES.find(c => c.id === t.cat) || CATEGORIES[0];
+      const cat = CATEGORIES.find(c => c.id === t.cat) || CATEGORIES[1];
       return `
-      <div class="task-item ${t.done ? 'done' : ''}" id="task-${t.id}">
-        <div class="check-ring" onclick="toggleTask('${t.id}')">
+      <div class="task-item ${t.done ? 'done' : ''}" data-id="${t.id}">
+        <div class="check-ring">
           <svg width="12" height="12" fill="none" stroke="#0a0a0f" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
             <polyline points="2 6 5 9 10 3"/>
           </svg>
         </div>
-        <div class="task-body" onclick="toggleTask('${t.id}')">
+        <div class="task-body">
           <div class="task-text">${escHtml(t.text)}</div>
           <div class="task-meta">
             <span class="task-cat">
@@ -713,7 +552,7 @@
             <span class="task-time">${t.time}</span>
           </div>
         </div>
-        <button class="delete-btn" onclick="deleteTask('${t.id}')">
+        <button class="delete-btn" data-delete="${t.id}" type="button">
           <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
             <line x1="3" y1="3" x2="13" y2="13"/><line x1="13" y1="3" x2="3" y2="13"/>
           </svg>
@@ -721,35 +560,44 @@
       </div>`;
     }).join('');
 
+    // Attach events to rendered tasks
+    list.querySelectorAll('.task-item').forEach(el => {
+      const id = el.dataset.id;
+      el.querySelector('.check-ring').addEventListener('click', () => toggleTask(id));
+      el.querySelector('.task-body').addEventListener('click', () => toggleTask(id));
+    });
+    list.querySelectorAll('.delete-btn').forEach(btn => {
+      btn.addEventListener('click', e => {
+        e.stopPropagation();
+        deleteTask(btn.dataset.delete);
+      });
+    });
+
     empty.classList.toggle('visible', visible.length === 0);
     updateStats();
     updateWidget();
   }
 
-  function escHtml(s) {
-    return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
-  }
-
   // ── Stats ──────────────────────────────────────────────────────────────────
   function updateStats() {
     const total = tasks.length;
-    const done = tasks.filter(t => t.done).length;
-    const left = total - done;
-    const pct = total ? Math.round((done / total) * 100) : 0;
+    const done  = tasks.filter(t => t.done).length;
+    const left  = total - done;
+    const pct   = total ? Math.round((done / total) * 100) : 0;
     document.getElementById('statTotal').textContent = total;
-    document.getElementById('statDone').textContent = done;
-    document.getElementById('statLeft').textContent = left;
-    document.getElementById('progPct').textContent = pct + '%';
-    document.getElementById('progFill').style.width = pct + '%';
+    document.getElementById('statDone').textContent  = done;
+    document.getElementById('statLeft').textContent  = left;
+    document.getElementById('progPct').textContent   = pct + '%';
+    document.getElementById('progFill').style.width  = pct + '%';
   }
 
   // ── Widget preview ─────────────────────────────────────────────────────────
   function updateWidget() {
-    const wt = document.getElementById('widgetTasks');
-    const wf = document.getElementById('widgetFooter');
+    const wt   = document.getElementById('widgetTasks');
+    const wf   = document.getElementById('widgetFooter');
     const top5 = tasks.slice(0, 5);
     const left = tasks.filter(t => !t.done).length;
-    const cat = id => CATEGORIES.find(c => c.id === id) || CATEGORIES[0];
+    const cat  = id => CATEGORIES.find(c => c.id === id) || CATEGORIES[1];
 
     wt.innerHTML = top5.map(t => `
       <div class="widget-task ${t.done ? 'done-task' : ''}">
@@ -762,11 +610,11 @@
   // ── Actions ────────────────────────────────────────────────────────────────
   function addTask() {
     const input = document.getElementById('taskInput');
-    const text = input.value.trim();
+    const text  = input.value.trim();
     if (!text) return;
     const cat = activeCat === 'all' ? 'perso' : activeCat;
     tasks.unshift({
-      id: Date.now().toString(),
+      id:   Date.now().toString(),
       text,
       done: false,
       cat,
@@ -789,33 +637,100 @@
     renderTasks();
   }
 
-  function setFilter(f, btn) {
-    filter = f;
-    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
-    btn.classList.add('active');
-    renderTasks();
+  // ── Scriptable widget script generator ────────────────────────────────────
+  function getScriptableCode() {
+    return `// Scriptable widget — Mes Tâches
+// Colle ce script dans Scriptable, puis ajoute le widget sur ton écran d'accueil.
+// Les données sont lues depuis iCloud Drive/Scriptable/taches.json
+// Dans l'app web, exporte tes tâches en JSON vers ce fichier.
+
+const fm = FileManager.iCloud();
+const path = fm.joinPath(fm.documentsDirectory(), "taches.json");
+let tasks = [];
+if (fm.fileExists(path)) {
+  try { tasks = JSON.parse(fm.readString(path)); } catch(e) {}
+}
+
+const w = new ListWidget();
+w.backgroundColor = new Color("#13131a");
+w.setPadding(14, 16, 14, 16);
+
+const title = w.addText("Mes tâches");
+title.font = Font.boldSystemFont(16);
+title.textColor = new Color("#c8f064");
+w.addSpacer(8);
+
+const pending = tasks.filter(t => !t.done).slice(0, 5);
+if (pending.length === 0) {
+  const none = w.addText("✓ Tout est fait !");
+  none.font = Font.systemFont(13);
+  none.textColor = new Color("#aaaaaa");
+} else {
+  for (const t of pending) {
+    const row = w.addText("• " + t.text);
+    row.font = Font.systemFont(13);
+    row.textColor = new Color("#f0f0f5");
+    row.lineLimit = 1;
+    w.addSpacer(4);
+  }
+}
+
+w.addSpacer();
+const footer = w.addText(pending.length + " restante" + (pending.length !== 1 ? "s" : ""));
+footer.font = Font.systemFont(10);
+footer.textColor = new Color("#666666");
+footer.rightAlignText();
+
+Script.setWidget(w);
+w.presentSmall();
+Script.complete();
+`;
   }
 
-  function clearDone() {
-    tasks = tasks.filter(t => !t.done);
-    save();
-    renderTasks();
-  }
+  // ── Wire up all buttons ────────────────────────────────────────────────────
+  document.getElementById('addBtn').addEventListener('click', addTask);
 
-  function showInstallHelp() {
-    document.getElementById('installBanner').classList.remove('hidden');
-    setTimeout(() => document.getElementById('installBanner').classList.add('hidden'), 6000);
-  }
-
-  // ── Enter key ──────────────────────────────────────────────────────────────
   document.getElementById('taskInput').addEventListener('keydown', e => {
     if (e.key === 'Enter') addTask();
   });
 
-  // ── Auto-hide banner on standalone ────────────────────────────────────────
-  if (window.navigator.standalone) {
-    document.getElementById('installBanner').classList.add('hidden');
-  }
+  document.getElementById('filterBar').querySelectorAll('.filter-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      filter = btn.dataset.filter;
+      document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      renderTasks();
+    });
+  });
+
+  document.getElementById('navClear').addEventListener('click', () => {
+    if (tasks.some(t => t.done)) {
+      tasks = tasks.filter(t => !t.done);
+      save();
+      renderTasks();
+    }
+  });
+
+  document.getElementById('copyScriptableBtn').addEventListener('click', () => {
+    const code = getScriptableCode();
+    if (navigator.clipboard) {
+      navigator.clipboard.writeText(code).then(() => {
+        const btn = document.getElementById('copyScriptableBtn');
+        btn.textContent = '✅ Copié !';
+        setTimeout(() => { btn.textContent = '📋 Copier le script Scriptable'; }, 2000);
+      });
+    } else {
+      const ta = document.createElement('textarea');
+      ta.value = code;
+      document.body.appendChild(ta);
+      ta.select();
+      document.execCommand('copy');
+      document.body.removeChild(ta);
+      const btn = document.getElementById('copyScriptableBtn');
+      btn.textContent = '✅ Copié !';
+      setTimeout(() => { btn.textContent = '📋 Copier le script Scriptable'; }, 2000);
+    }
+  });
 
   // ── Init ───────────────────────────────────────────────────────────────────
   buildCatBar();
