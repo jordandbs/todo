@@ -1,0 +1,830 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="Tâches" />
+  <meta name="theme-color" content="#0a0a0f" />
+  <title>Tâches</title>
+  <link rel="manifest" href="manifest.json" />
+  <link rel="apple-touch-icon" href="icon-192.png" />
+  <link rel="apple-touch-icon" sizes="180x180" href="icon-192.png" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg: #0a0a0f;
+      --surface: #13131a;
+      --surface2: #1c1c28;
+      --border: rgba(255,255,255,0.07);
+      --accent: #c8f064;
+      --accent2: #7b61ff;
+      --text: #f0f0f5;
+      --muted: rgba(240,240,245,0.4);
+      --danger: #ff4d6d;
+      --radius: 20px;
+      --safe-top: env(safe-area-inset-top);
+      --safe-bottom: env(safe-area-inset-bottom);
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100dvh;
+      overflow-x: hidden;
+      padding-top: calc(var(--safe-top) + 0px);
+      padding-bottom: calc(var(--safe-bottom) + 80px);
+    }
+
+    /* Background orbs */
+    .bg-orb {
+      position: fixed;
+      border-radius: 50%;
+      filter: blur(80px);
+      pointer-events: none;
+      z-index: 0;
+    }
+    .bg-orb-1 {
+      width: 320px; height: 320px;
+      background: radial-gradient(circle, rgba(123,97,255,0.18) 0%, transparent 70%);
+      top: -80px; right: -80px;
+    }
+    .bg-orb-2 {
+      width: 280px; height: 280px;
+      background: radial-gradient(circle, rgba(200,240,100,0.10) 0%, transparent 70%);
+      bottom: 20%; left: -100px;
+    }
+
+    .app {
+      position: relative;
+      z-index: 1;
+      max-width: 430px;
+      margin: 0 auto;
+      padding: 0 20px;
+    }
+
+    /* Header */
+    .header {
+      padding: 28px 0 24px;
+    }
+    .header-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+    }
+    .greeting {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 13px;
+      font-weight: 400;
+      color: var(--muted);
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      margin-bottom: 4px;
+    }
+    .title {
+      font-family: 'DM Serif Display', serif;
+      font-size: 38px;
+      font-weight: 400;
+      line-height: 1.1;
+      background: linear-gradient(135deg, var(--text) 0%, rgba(240,240,245,0.6) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .title em {
+      font-style: italic;
+      background: linear-gradient(135deg, var(--accent) 0%, #a8e63c 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .date-badge {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 8px 14px;
+      text-align: right;
+    }
+    .date-badge .day {
+      font-family: 'DM Serif Display', serif;
+      font-size: 26px;
+      line-height: 1;
+      color: var(--text);
+    }
+    .date-badge .month {
+      font-size: 11px;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+    }
+
+    /* Stats strip */
+    .stats {
+      display: flex;
+      gap: 10px;
+      margin: 16px 0 24px;
+    }
+    .stat {
+      flex: 1;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 14px 16px;
+    }
+    .stat-num {
+      font-family: 'DM Serif Display', serif;
+      font-size: 28px;
+      line-height: 1;
+      margin-bottom: 2px;
+    }
+    .stat-num.accent { color: var(--accent); }
+    .stat-num.muted { color: var(--muted); }
+    .stat-label {
+      font-size: 11px;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+
+    /* Progress bar */
+    .progress-wrap {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 16px 20px;
+      margin-bottom: 24px;
+    }
+    .progress-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 10px;
+    }
+    .progress-label {
+      font-size: 12px;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+    .progress-pct {
+      font-family: 'DM Serif Display', serif;
+      font-size: 16px;
+      color: var(--accent);
+    }
+    .progress-bar {
+      height: 6px;
+      background: var(--surface2);
+      border-radius: 99px;
+      overflow: hidden;
+    }
+    .progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--accent2) 0%, var(--accent) 100%);
+      border-radius: 99px;
+      transition: width 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+
+    /* Input area */
+    .input-wrap {
+      position: relative;
+      margin-bottom: 28px;
+    }
+    .task-input {
+      width: 100%;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 18px 60px 18px 20px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 15px;
+      font-weight: 400;
+      color: var(--text);
+      outline: none;
+      transition: border-color 0.2s, box-shadow 0.2s;
+      -webkit-appearance: none;
+    }
+    .task-input::placeholder { color: var(--muted); }
+    .task-input:focus {
+      border-color: rgba(200,240,100,0.4);
+      box-shadow: 0 0 0 3px rgba(200,240,100,0.08);
+    }
+    .add-btn {
+      position: absolute;
+      right: 10px; top: 50%;
+      transform: translateY(-50%);
+      width: 40px; height: 40px;
+      background: var(--accent);
+      border: none;
+      border-radius: 12px;
+      cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      transition: transform 0.15s, background 0.15s;
+    }
+    .add-btn:active { transform: translateY(-50%) scale(0.9); }
+    .add-btn svg { color: #0a0a0f; }
+
+    /* Filter tabs */
+    .filters {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 20px;
+      overflow-x: auto;
+      scrollbar-width: none;
+      -webkit-overflow-scrolling: touch;
+    }
+    .filters::-webkit-scrollbar { display: none; }
+    .filter-btn {
+      flex-shrink: 0;
+      padding: 8px 18px;
+      border-radius: 99px;
+      border: 1px solid var(--border);
+      background: transparent;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--muted);
+      cursor: pointer;
+      transition: all 0.2s;
+      -webkit-appearance: none;
+    }
+    .filter-btn.active {
+      background: var(--accent);
+      border-color: var(--accent);
+      color: #0a0a0f;
+    }
+
+    /* Category selector */
+    .category-bar {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 20px;
+      overflow-x: auto;
+      scrollbar-width: none;
+    }
+    .category-bar::-webkit-scrollbar { display: none; }
+    .cat-chip {
+      flex-shrink: 0;
+      padding: 6px 14px;
+      border-radius: 99px;
+      border: 1px solid var(--border);
+      background: transparent;
+      font-size: 12px;
+      color: var(--muted);
+      cursor: pointer;
+      transition: all 0.2s;
+      display: flex; align-items: center; gap: 5px;
+      -webkit-appearance: none;
+    }
+    .cat-chip.selected {
+      background: var(--surface2);
+      border-color: rgba(255,255,255,0.15);
+      color: var(--text);
+    }
+
+    /* Section label */
+    .section-label {
+      font-size: 11px;
+      font-weight: 500;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      margin-bottom: 12px;
+    }
+
+    /* Task list */
+    .tasks { display: flex; flex-direction: column; gap: 10px; }
+
+    .task-item {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 16px 18px;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+      cursor: pointer;
+      -webkit-tap-highlight-color: transparent;
+      animation: slideIn 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+    @keyframes slideIn {
+      from { opacity: 0; transform: translateY(10px) scale(0.97); }
+      to { opacity: 1; transform: translateY(0) scale(1); }
+    }
+    .task-item.done {
+      opacity: 0.5;
+    }
+    .task-item.done .task-text {
+      text-decoration: line-through;
+      color: var(--muted);
+    }
+
+    .check-ring {
+      flex-shrink: 0;
+      width: 26px; height: 26px;
+      border-radius: 50%;
+      border: 2px solid var(--border);
+      display: flex; align-items: center; justify-content: center;
+      transition: all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+      background: transparent;
+    }
+    .task-item.done .check-ring {
+      background: var(--accent);
+      border-color: var(--accent);
+    }
+    .check-ring svg { opacity: 0; transition: opacity 0.2s; }
+    .task-item.done .check-ring svg { opacity: 1; }
+
+    .task-body { flex: 1; min-width: 0; }
+    .task-text {
+      font-size: 15px;
+      font-weight: 400;
+      color: var(--text);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      transition: color 0.2s;
+    }
+    .task-meta {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-top: 4px;
+    }
+    .task-cat {
+      font-size: 11px;
+      color: var(--muted);
+      display: flex; align-items: center; gap: 3px;
+    }
+    .task-time {
+      font-size: 11px;
+      color: var(--muted);
+    }
+    .cat-dot {
+      width: 6px; height: 6px;
+      border-radius: 50%;
+      display: inline-block;
+    }
+
+    .delete-btn {
+      flex-shrink: 0;
+      width: 32px; height: 32px;
+      border: none;
+      background: transparent;
+      color: var(--muted);
+      cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      border-radius: 8px;
+      transition: all 0.2s;
+      -webkit-appearance: none;
+      padding: 0;
+    }
+    .delete-btn:active {
+      background: rgba(255,77,109,0.15);
+      color: var(--danger);
+    }
+
+    /* Empty state */
+    .empty {
+      text-align: center;
+      padding: 50px 20px;
+      display: none;
+    }
+    .empty.visible { display: block; }
+    .empty-icon {
+      font-size: 48px;
+      margin-bottom: 12px;
+    }
+    .empty-text {
+      font-family: 'DM Serif Display', serif;
+      font-size: 22px;
+      color: var(--text);
+      margin-bottom: 6px;
+    }
+    .empty-sub {
+      font-size: 14px;
+      color: var(--muted);
+    }
+
+    /* Bottom nav */
+    .bottom-nav {
+      position: fixed;
+      bottom: 0; left: 0; right: 0;
+      padding: 12px 24px calc(var(--safe-bottom) + 12px);
+      background: rgba(10,10,15,0.85);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border-top: 1px solid var(--border);
+      display: flex;
+      justify-content: space-around;
+      z-index: 100;
+    }
+    .nav-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+      cursor: pointer;
+      color: var(--muted);
+      font-size: 11px;
+      transition: color 0.2s;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .nav-item.active { color: var(--accent); }
+
+    /* Install banner */
+    .install-banner {
+      position: fixed;
+      top: calc(var(--safe-top) + 10px);
+      left: 16px; right: 16px;
+      background: var(--surface2);
+      border: 1px solid rgba(200,240,100,0.3);
+      border-radius: 18px;
+      padding: 14px 18px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      z-index: 200;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+      animation: slideDown 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+    @keyframes slideDown {
+      from { opacity: 0; transform: translateY(-20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .install-banner.hidden { display: none; }
+    .install-text { flex: 1; font-size: 13px; color: var(--text); line-height: 1.4; }
+    .install-text strong { color: var(--accent); }
+    .install-close {
+      background: none; border: none;
+      color: var(--muted); font-size: 18px;
+      cursor: pointer; padding: 0;
+      -webkit-appearance: none;
+    }
+
+    /* Widget preview */
+    .widget-section {
+      margin-top: 32px;
+      padding-bottom: 10px;
+    }
+    .widget-preview {
+      background: linear-gradient(135deg, #1c1c28 0%, #13131a 100%);
+      border: 1px solid var(--border);
+      border-radius: 24px;
+      padding: 20px;
+      position: relative;
+      overflow: hidden;
+    }
+    .widget-preview::before {
+      content: '';
+      position: absolute;
+      top: -40px; right: -40px;
+      width: 120px; height: 120px;
+      background: radial-gradient(circle, rgba(123,97,255,0.25) 0%, transparent 70%);
+      border-radius: 50%;
+    }
+    .widget-title {
+      font-family: 'DM Serif Display', serif;
+      font-size: 18px;
+      margin-bottom: 12px;
+    }
+    .widget-tasks { display: flex; flex-direction: column; gap: 8px; }
+    .widget-task {
+      display: flex; align-items: center; gap: 10px;
+      font-size: 13px;
+      color: var(--text);
+    }
+    .widget-task.done-task { color: var(--muted); text-decoration: line-through; }
+    .w-dot {
+      width: 8px; height: 8px; border-radius: 50%;
+      flex-shrink: 0;
+    }
+    .widget-footer {
+      margin-top: 14px;
+      font-size: 11px;
+      color: var(--muted);
+      text-align: right;
+    }
+  </style>
+</head>
+<body>
+
+<!-- Background -->
+<div class="bg-orb bg-orb-1"></div>
+<div class="bg-orb bg-orb-2"></div>
+
+<!-- Install banner (iOS hint) -->
+<div class="install-banner" id="installBanner">
+  <span style="font-size:22px">📲</span>
+  <div class="install-text">
+    <strong>Ajouter à l'écran d'accueil</strong><br>
+    Tap <strong>⎙ Partager</strong> puis « Sur l'écran d'accueil »
+  </div>
+  <button class="install-close" onclick="document.getElementById('installBanner').classList.add('hidden')">✕</button>
+</div>
+
+<div class="app">
+  <!-- Header -->
+  <div class="header">
+    <div class="header-top">
+      <div>
+        <div class="greeting" id="greeting">Bonjour</div>
+        <div class="title">Mes <em>tâches</em></div>
+      </div>
+      <div class="date-badge">
+        <div class="day" id="dayNum">—</div>
+        <div class="month" id="monthName">—</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Stats -->
+  <div class="stats">
+    <div class="stat">
+      <div class="stat-num accent" id="statTotal">0</div>
+      <div class="stat-label">Total</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num accent" id="statDone">0</div>
+      <div class="stat-label">Faites</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num muted" id="statLeft">0</div>
+      <div class="stat-label">Restantes</div>
+    </div>
+  </div>
+
+  <!-- Progress -->
+  <div class="progress-wrap">
+    <div class="progress-header">
+      <span class="progress-label">Progression du jour</span>
+      <span class="progress-pct" id="progPct">0%</span>
+    </div>
+    <div class="progress-bar">
+      <div class="progress-fill" id="progFill" style="width:0%"></div>
+    </div>
+  </div>
+
+  <!-- Input -->
+  <div class="input-wrap">
+    <input type="text" class="task-input" id="taskInput"
+      placeholder="Ajouter une tâche…" maxlength="80"
+      autocomplete="off" autocorrect="off" spellcheck="false" />
+    <button class="add-btn" id="addBtn" onclick="addTask()">
+      <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
+        <line x1="9" y1="2" x2="9" y2="16"/><line x1="2" y1="9" x2="16" y2="9"/>
+      </svg>
+    </button>
+  </div>
+
+  <!-- Category selector -->
+  <div class="category-bar" id="catBar"></div>
+
+  <!-- Filters -->
+  <div class="filters">
+    <button class="filter-btn active" onclick="setFilter('all', this)">Toutes</button>
+    <button class="filter-btn" onclick="setFilter('active', this)">À faire</button>
+    <button class="filter-btn" onclick="setFilter('done', this)">Terminées</button>
+  </div>
+
+  <!-- Section label -->
+  <div class="section-label" id="sectionLabel">Aujourd'hui</div>
+
+  <!-- Tasks -->
+  <div class="tasks" id="taskList"></div>
+
+  <!-- Empty state -->
+  <div class="empty" id="emptyState">
+    <div class="empty-icon">✦</div>
+    <div class="empty-text">Tout est fait !</div>
+    <div class="empty-sub">Ajoutez une tâche pour commencer</div>
+  </div>
+
+  <!-- Widget preview section -->
+  <div class="widget-section">
+    <div class="section-label" style="margin-bottom:14px">Aperçu widget</div>
+    <div class="widget-preview">
+      <div class="widget-title">Tâches</div>
+      <div class="widget-tasks" id="widgetTasks"></div>
+      <div class="widget-footer" id="widgetFooter">— tâches restantes</div>
+    </div>
+  </div>
+</div>
+
+<!-- Bottom Nav -->
+<div class="bottom-nav">
+  <div class="nav-item active">
+    <svg width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M9 11l2 2 4-4"/><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M16 3v4M8 3v4M3 9h18"/>
+    </svg>
+    Liste
+  </div>
+  <div class="nav-item" onclick="showInstallHelp()">
+    <svg width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+      <rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/>
+      <rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/>
+    </svg>
+    Widget
+  </div>
+  <div class="nav-item" onclick="clearDone()">
+    <svg width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+      <polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6"/>
+      <path d="M10 11v6M14 11v6"/><path d="M9 6V4a1 1 0 011-1h4a1 1 0 011 1v2"/>
+    </svg>
+    Vider
+  </div>
+</div>
+
+<script>
+  // ── State ──────────────────────────────────────────────────────────────────
+  const CATEGORIES = [
+    { id: 'all',      label: '✦ Tout',     color: '#c8f064' },
+    { id: 'perso',    label: '🏠 Perso',   color: '#7b61ff' },
+    { id: 'travail',  label: '💼 Travail',  color: '#ff9f43' },
+    { id: 'courses',  label: '🛒 Courses', color: '#54d4a0' },
+    { id: 'sante',    label: '❤️ Santé',   color: '#ff4d6d' },
+  ];
+
+  let tasks = JSON.parse(localStorage.getItem('pwa_tasks') || '[]');
+  let filter = 'all';
+  let activeCat = 'all';
+
+  // ── Date / greeting ────────────────────────────────────────────────────────
+  const now = new Date();
+  const h = now.getHours();
+  document.getElementById('greeting').textContent =
+    h < 12 ? 'Bonjour ☀️' : h < 18 ? 'Bon après-midi 🌤' : 'Bonsoir 🌙';
+  document.getElementById('dayNum').textContent = now.getDate();
+  document.getElementById('monthName').textContent =
+    now.toLocaleDateString('fr-FR', { month: 'short' }).toUpperCase();
+
+  // ── Persist ────────────────────────────────────────────────────────────────
+  function save() { localStorage.setItem('pwa_tasks', JSON.stringify(tasks)); }
+
+  // ── Build category bar ────────────────────────────────────────────────────
+  function buildCatBar() {
+    const bar = document.getElementById('catBar');
+    bar.innerHTML = CATEGORIES.map(c => `
+      <button class="cat-chip ${activeCat === c.id ? 'selected' : ''}"
+        onclick="setCategory('${c.id}')">
+        <span class="cat-dot" style="background:${c.color}"></span>${c.label}
+      </button>`).join('');
+  }
+
+  function setCategory(id) {
+    activeCat = id;
+    buildCatBar();
+    renderTasks();
+  }
+
+  // ── Render ─────────────────────────────────────────────────────────────────
+  function renderTasks() {
+    const list = document.getElementById('taskList');
+    const empty = document.getElementById('emptyState');
+
+    let visible = tasks.filter(t => {
+      if (filter === 'active') return !t.done;
+      if (filter === 'done') return t.done;
+      return true;
+    });
+    if (activeCat !== 'all') visible = visible.filter(t => t.cat === activeCat);
+
+    list.innerHTML = visible.map(t => {
+      const cat = CATEGORIES.find(c => c.id === t.cat) || CATEGORIES[0];
+      return `
+      <div class="task-item ${t.done ? 'done' : ''}" id="task-${t.id}">
+        <div class="check-ring" onclick="toggleTask('${t.id}')">
+          <svg width="12" height="12" fill="none" stroke="#0a0a0f" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="2 6 5 9 10 3"/>
+          </svg>
+        </div>
+        <div class="task-body" onclick="toggleTask('${t.id}')">
+          <div class="task-text">${escHtml(t.text)}</div>
+          <div class="task-meta">
+            <span class="task-cat">
+              <span class="cat-dot" style="background:${cat.color}"></span>
+              ${cat.label.replace(/\S+ /, '')}
+            </span>
+            <span class="task-time">${t.time}</span>
+          </div>
+        </div>
+        <button class="delete-btn" onclick="deleteTask('${t.id}')">
+          <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+            <line x1="3" y1="3" x2="13" y2="13"/><line x1="13" y1="3" x2="3" y2="13"/>
+          </svg>
+        </button>
+      </div>`;
+    }).join('');
+
+    empty.classList.toggle('visible', visible.length === 0);
+    updateStats();
+    updateWidget();
+  }
+
+  function escHtml(s) {
+    return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  }
+
+  // ── Stats ──────────────────────────────────────────────────────────────────
+  function updateStats() {
+    const total = tasks.length;
+    const done = tasks.filter(t => t.done).length;
+    const left = total - done;
+    const pct = total ? Math.round((done / total) * 100) : 0;
+    document.getElementById('statTotal').textContent = total;
+    document.getElementById('statDone').textContent = done;
+    document.getElementById('statLeft').textContent = left;
+    document.getElementById('progPct').textContent = pct + '%';
+    document.getElementById('progFill').style.width = pct + '%';
+  }
+
+  // ── Widget preview ─────────────────────────────────────────────────────────
+  function updateWidget() {
+    const wt = document.getElementById('widgetTasks');
+    const wf = document.getElementById('widgetFooter');
+    const top5 = tasks.slice(0, 5);
+    const left = tasks.filter(t => !t.done).length;
+    const cat = id => CATEGORIES.find(c => c.id === id) || CATEGORIES[0];
+
+    wt.innerHTML = top5.map(t => `
+      <div class="widget-task ${t.done ? 'done-task' : ''}">
+        <span class="w-dot" style="background:${t.done ? '#444' : cat(t.cat).color}"></span>
+        ${escHtml(t.text)}
+      </div>`).join('') || '<div style="color:var(--muted);font-size:13px">Aucune tâche</div>';
+    wf.textContent = left + ' tâche' + (left !== 1 ? 's' : '') + ' restante' + (left !== 1 ? 's' : '');
+  }
+
+  // ── Actions ────────────────────────────────────────────────────────────────
+  function addTask() {
+    const input = document.getElementById('taskInput');
+    const text = input.value.trim();
+    if (!text) return;
+    const cat = activeCat === 'all' ? 'perso' : activeCat;
+    tasks.unshift({
+      id: Date.now().toString(),
+      text,
+      done: false,
+      cat,
+      time: new Date().toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })
+    });
+    input.value = '';
+    save();
+    renderTasks();
+    input.focus();
+  }
+
+  function toggleTask(id) {
+    const t = tasks.find(t => t.id === id);
+    if (t) { t.done = !t.done; save(); renderTasks(); }
+  }
+
+  function deleteTask(id) {
+    tasks = tasks.filter(t => t.id !== id);
+    save();
+    renderTasks();
+  }
+
+  function setFilter(f, btn) {
+    filter = f;
+    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    renderTasks();
+  }
+
+  function clearDone() {
+    tasks = tasks.filter(t => !t.done);
+    save();
+    renderTasks();
+  }
+
+  function showInstallHelp() {
+    document.getElementById('installBanner').classList.remove('hidden');
+    setTimeout(() => document.getElementById('installBanner').classList.add('hidden'), 6000);
+  }
+
+  // ── Enter key ──────────────────────────────────────────────────────────────
+  document.getElementById('taskInput').addEventListener('keydown', e => {
+    if (e.key === 'Enter') addTask();
+  });
+
+  // ── Auto-hide banner on standalone ────────────────────────────────────────
+  if (window.navigator.standalone) {
+    document.getElementById('installBanner').classList.add('hidden');
+  }
+
+  // ── Init ───────────────────────────────────────────────────────────────────
+  buildCatBar();
+  renderTasks();
+
+  // ── Service Worker ─────────────────────────────────────────────────────────
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('sw.js').catch(() => {});
+  }
+</script>
+</body>
+</html>
