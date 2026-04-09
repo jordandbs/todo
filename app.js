@@ -1,290 +1,235 @@
+// ── Theme ──────────────────────────────────────────────────────────────────
+const html = document.documentElement;
+let theme = localStorage.getItem('theme') || 'dark';
+html.setAttribute('data-theme', theme);
+
+function toggleTheme() {
+  theme = theme === 'dark' ? 'light' : 'dark';
+  html.setAttribute('data-theme', theme);
+  localStorage.setItem('theme', theme);
+  renderThemeIcon();
+}
+
+function renderThemeIcon() {
+  const btn = document.getElementById('themeBtn');
+  btn.innerHTML = theme === 'dark'
+    ? `<svg width="19" height="19" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+         <circle cx="12" cy="12" r="4.5"/>
+         <line x1="12" y1="2" x2="12" y2="4.5"/>
+         <line x1="12" y1="19.5" x2="12" y2="22"/>
+         <line x1="4.22" y1="4.22" x2="5.93" y2="5.93"/>
+         <line x1="18.07" y1="18.07" x2="19.78" y2="19.78"/>
+         <line x1="2" y1="12" x2="4.5" y2="12"/>
+         <line x1="19.5" y1="12" x2="22" y2="12"/>
+         <line x1="4.22" y1="19.78" x2="5.93" y2="18.07"/>
+         <line x1="18.07" y1="5.93" x2="19.78" y2="4.22"/>
+       </svg>`
+    : `<svg width="19" height="19" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+         <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+       </svg>`;
+}
+
+// ── Date header ────────────────────────────────────────────────────────────
+(function() {
+  const now = new Date();
+  const day = now.toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long' });
+  document.getElementById('headerDay').textContent = day.charAt(0).toUpperCase() + day.slice(1);
+})();
+
 // ── State ──────────────────────────────────────────────────────────────────
-const CATEGORIES = [
-  { id: 'all',     label: '✦ Tout',    color: '#c8f064' },
-  { id: 'perso',   label: '🏠 Perso',  color: '#7b61ff' },
-  { id: 'travail', label: '💼 Travail', color: '#ff9f43' },
-  { id: 'courses', label: '🛒 Courses', color: '#54d4a0' },
-  { id: 'sante',   label: '❤️ Santé',  color: '#ff4d6d' },
-];
-
 let tasks = [];
-try { tasks = JSON.parse(localStorage.getItem('pwa_tasks') || '[]'); } catch(e) {}
+try { tasks = JSON.parse(localStorage.getItem('tasks_v2') || '[]'); } catch(e) {}
 let filter = 'all';
-let activeCat = 'all';
+let activeView = 'list';
 
-// ── Date / greeting ────────────────────────────────────────────────────────
-const now = new Date();
-const h = now.getHours();
-document.getElementById('greeting').textContent =
-  h < 12 ? 'Bonjour ☀️' : h < 18 ? 'Bon après-midi 🌤' : 'Bonsoir 🌙';
-document.getElementById('dayNum').textContent = now.getDate();
-document.getElementById('monthName').textContent =
-  now.toLocaleDateString('fr-FR', { month: 'short' }).toUpperCase();
-
-// ── Persist ────────────────────────────────────────────────────────────────
 function save() {
-  try { localStorage.setItem('pwa_tasks', JSON.stringify(tasks)); } catch(e) {}
+  try { localStorage.setItem('tasks_v2', JSON.stringify(tasks)); } catch(e) {}
 }
 
-// ── Escape HTML ───────────────────────────────────────────────────────────
-function escHtml(s) {
-  return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+// ── Time remaining ─────────────────────────────────────────────────────────
+function timeRemaining(task) {
+  if (!task.dueDate) return { label: 'Sans échéance', cls: 'none' };
+
+  const dueStr = task.dueDate + (task.dueTime ? 'T' + task.dueTime : 'T23:59');
+  const due    = new Date(dueStr);
+  const now    = new Date();
+  const diff   = due - now; // ms
+
+  if (diff < 0) {
+    return { label: 'En retard', cls: 'late' };
+  }
+
+  const totalMin = Math.floor(diff / 60000);
+  const days  = Math.floor(totalMin / 1440);
+  const hours = Math.floor((totalMin % 1440) / 60);
+  const mins  = totalMin % 60;
+
+  let label;
+  if (days > 1)       label = `dans ${days}j ${hours}h`;
+  else if (days === 1) label = `dans 1j ${hours}h`;
+  else if (hours > 0)  label = `dans ${hours}h ${mins}min`;
+  else if (mins > 0)   label = `dans ${mins}min`;
+  else                 label = `Maintenant`;
+
+  const cls = days >= 1 ? 'ok' : hours >= 3 ? 'warn' : 'late';
+  return { label, cls };
 }
 
-// ── Category bar ──────────────────────────────────────────────────────────
-function buildCatBar() {
-  const bar = document.getElementById('catBar');
-  bar.innerHTML = CATEGORIES.map(c => `
-    <button class="cat-chip ${activeCat === c.id ? 'selected' : ''}" data-cat="${c.id}">
-      <span class="cat-dot" style="background:${c.color}"></span>${c.label}
-    </button>`).join('');
-  bar.querySelectorAll('.cat-chip').forEach(btn => {
-    btn.addEventListener('click', () => {
-      activeCat = btn.dataset.cat;
-      buildCatBar();
-      renderTasks();
-    });
-  });
+// ── Escape ─────────────────────────────────────────────────────────────────
+function esc(s) {
+  return String(s)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;');
 }
 
-// ── Render ─────────────────────────────────────────────────────────────────
-function renderTasks() {
-  const list = document.getElementById('taskList');
-  const empty = document.getElementById('emptyState');
+// ── Render list view ───────────────────────────────────────────────────────
+function renderList() {
+  const total = tasks.length;
+  const done  = tasks.filter(t => t.done).length;
+  const left  = total - done;
+  const pct   = total ? Math.round((done / total) * 100) : 0;
 
-  let visible = tasks.filter(t => {
-    if (filter === 'active') return !t.done;
-    if (filter === 'done')   return t.done;
-    return true;
-  });
-  if (activeCat !== 'all') visible = visible.filter(t => t.cat === activeCat);
+  // Progress
+  document.getElementById('progFill').style.width = pct + '%';
+  document.getElementById('progLeft').textContent = left;
+  document.getElementById('progPct').textContent  = pct + '%';
+
+  // Filter
+  let visible = tasks;
+  if (filter === 'active') visible = tasks.filter(t => !t.done);
+  if (filter === 'done')   visible = tasks.filter(t =>  t.done);
+
+  const list  = document.getElementById('taskList');
+  const empty = document.getElementById('empty');
 
   list.innerHTML = visible.map(t => {
-    const cat = CATEGORIES.find(c => c.id === t.cat) || CATEGORIES[1];
+    const tr = timeRemaining(t);
     return `
-    <div class="task-item ${t.done ? 'done' : ''}" data-id="${t.id}">
-      <div class="check-ring">
-        <svg width="12" height="12" fill="none" stroke="#0a0a0f" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-          <polyline points="2 6 5 9 10 3"/>
+    <div class="task-card ${t.done ? 'done' : ''}" data-id="${t.id}">
+      <div class="checkbox" data-check="${t.id}">
+        <svg width="10" height="10" fill="none" stroke="#fff" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="1.5 5.5 4 8 8.5 2"/>
         </svg>
       </div>
       <div class="task-body">
-        <div class="task-text">${escHtml(t.text)}</div>
-        <div class="task-meta">
-          <span class="task-cat">
-            <span class="cat-dot" style="background:${cat.color}"></span>
-            ${cat.label.replace(/\S+ /, '')}
-          </span>
-          <span class="task-time">${t.time}</span>
-        </div>
+        <div class="task-title">${esc(t.title)}</div>
+        ${t.desc ? `<div class="task-desc">${esc(t.desc)}</div>` : ''}
+        <span class="task-time-badge ${tr.cls}">
+          ${tr.cls === 'none'
+            ? `<svg width="11" height="11" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="5.5" cy="5.5" r="4.5"/><path d="M5.5 3v2.5l1.5 1.5"/></svg>`
+            : `<svg width="11" height="11" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="5.5" cy="5.5" r="4.5"/><path d="M5.5 3v2.5l1.5 1.5"/></svg>`
+          }
+          ${tr.label}
+        </span>
       </div>
-      <button class="delete-btn" data-delete="${t.id}" type="button">
-        <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
-          <line x1="3" y1="3" x2="13" y2="13"/><line x1="13" y1="3" x2="3" y2="13"/>
+      <button class="del-btn" data-del="${t.id}" type="button" aria-label="Supprimer">
+        <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round">
+          <line x1="1.5" y1="1.5" x2="11.5" y2="11.5"/>
+          <line x1="11.5" y1="1.5" x2="1.5" y2="11.5"/>
         </svg>
       </button>
     </div>`;
   }).join('');
 
-  // Attach events to rendered tasks
-  list.querySelectorAll('.task-item').forEach(el => {
-    const id = el.dataset.id;
-    el.querySelector('.check-ring').addEventListener('click', () => toggleTask(id));
-    el.querySelector('.task-body').addEventListener('click', () => toggleTask(id));
+  // Events
+  list.querySelectorAll('[data-check]').forEach(el => {
+    el.addEventListener('click', () => toggle(el.dataset.check));
   });
-  list.querySelectorAll('.delete-btn').forEach(btn => {
-    btn.addEventListener('click', e => {
-      e.stopPropagation();
-      deleteTask(btn.dataset.delete);
-    });
+  list.querySelectorAll('.task-body').forEach(el => {
+    const card = el.closest('.task-card');
+    el.addEventListener('click', () => toggle(card.dataset.id));
+  });
+  list.querySelectorAll('.del-btn').forEach(btn => {
+    btn.addEventListener('click', e => { e.stopPropagation(); remove(btn.dataset.del); });
   });
 
-  empty.classList.toggle('visible', visible.length === 0);
-  updateStats();
-  updateWidget();
+  // Empty
+  const isEmpty = visible.length === 0;
+  empty.classList.toggle('show', isEmpty);
+  if (isEmpty) {
+    const configs = {
+      all:    { icon: '✦', title: 'Aucune tâche', sub: 'Ajoute ta première tâche via "New"' },
+      active: { icon: '✅', title: 'Tout est fait !', sub: 'Profite de ta journée 🎉' },
+      done:   { icon: '🎯', title: 'Rien de terminé', sub: 'Coche une tâche pour la voir ici' },
+    };
+    const c = configs[filter];
+    document.getElementById('emptyIcon').textContent  = c.icon;
+    document.getElementById('emptyTitle').textContent = c.title;
+    document.getElementById('emptySub').textContent   = c.sub;
+  }
 }
 
-// ── Stats ──────────────────────────────────────────────────────────────────
-function updateStats() {
-  const total = tasks.length;
-  const done  = tasks.filter(t => t.done).length;
-  const left  = total - done;
-  const pct   = total ? Math.round((done / total) * 100) : 0;
-  document.getElementById('statTotal').textContent = total;
-  document.getElementById('statDone').textContent  = done;
-  document.getElementById('statLeft').textContent  = left;
-  document.getElementById('progPct').textContent   = pct + '%';
-  document.getElementById('progFill').style.width  = pct + '%';
-}
-
-// ── Widget preview ─────────────────────────────────────────────────────────
-function updateWidget() {
-  const wt   = document.getElementById('widgetTasks');
-  const wf   = document.getElementById('widgetFooter');
-  const top5 = tasks.slice(0, 5);
-  const left = tasks.filter(t => !t.done).length;
-  const cat  = id => CATEGORIES.find(c => c.id === id) || CATEGORIES[1];
-
-  wt.innerHTML = top5.map(t => `
-    <div class="widget-task ${t.done ? 'done-task' : ''}">
-      <span class="w-dot" style="background:${t.done ? '#444' : cat(t.cat).color}"></span>
-      ${escHtml(t.text)}
-    </div>`).join('') || '<div style="color:var(--muted);font-size:13px">Aucune tâche</div>';
-  wf.textContent = left + ' tâche' + (left !== 1 ? 's' : '') + ' restante' + (left !== 1 ? 's' : '');
-}
-
-// ── Actions ────────────────────────────────────────────────────────────────
-function addTask() {
-  const input = document.getElementById('taskInput');
-  const text  = input.value.trim();
-  if (!text) return;
-  const cat = activeCat === 'all' ? 'perso' : activeCat;
-  tasks.unshift({
-    id:   Date.now().toString(),
-    text,
-    done: false,
-    cat,
-    time: new Date().toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })
-  });
-  input.value = '';
-  save();
-  renderTasks();
-  input.focus();
-}
-
-function toggleTask(id) {
+// ── Task actions ───────────────────────────────────────────────────────────
+function toggle(id) {
   const t = tasks.find(t => t.id === id);
-  if (t) { t.done = !t.done; save(); renderTasks(); }
+  if (t) { t.done = !t.done; save(); renderList(); }
 }
 
-function deleteTask(id) {
+function remove(id) {
   tasks = tasks.filter(t => t.id !== id);
   save();
-  renderTasks();
+  renderList();
 }
 
-// ── Export tâches vers iCloud (Scriptable) ────────────────────────────────
-function exportToiCloud() {
-  const json = JSON.stringify(tasks, null, 2);
-  const blob = new Blob([json], { type: 'application/json' });
-  const url  = URL.createObjectURL(blob);
+// ── Add task (from form) ───────────────────────────────────────────────────
+function handleSubmit(e) {
+  e.preventDefault();
 
-  const a = document.createElement('a');
-  a.href = url;
-  a.download = 'taches.json';
-  document.body.appendChild(a);
-  a.click();
-  document.body.removeChild(a);
-  URL.revokeObjectURL(url);
+  const title = document.getElementById('fTitle').value.trim();
+  if (!title) { document.getElementById('fTitle').focus(); return; }
 
-  // Feedback visuel
-  const btn = document.getElementById('exportBtn');
-  if (btn) {
-    btn.textContent = '✅ Fichier prêt !';
-    setTimeout(() => { btn.textContent = '☁️ Exporter vers iCloud'; }, 2500);
-  }
+  tasks.unshift({
+    id:      Date.now().toString(),
+    title,
+    desc:    document.getElementById('fDesc').value.trim(),
+    dueDate: document.getElementById('fDate').value,
+    dueTime: document.getElementById('fTime').value,
+    done:    false,
+  });
+
+  save();
+  e.target.reset();
+  switchView('list');
 }
 
-// ── Scriptable widget script generator ────────────────────────────────────
-function getScriptableCode() {
-  return `// Scriptable widget — Mes Tâches
-// Colle ce script dans Scriptable, puis ajoute le widget sur ton écran d'accueil.
-// Les données sont lues depuis iCloud Drive/Scriptable/taches.json
-// Dans l'app web, exporte tes tâches en JSON vers ce fichier.
+// ── View switching ─────────────────────────────────────────────────────────
+function switchView(v) {
+  activeView = v;
+  document.querySelectorAll('.view').forEach(el => el.classList.remove('active'));
+  document.getElementById('view-' + v).classList.add('active');
 
-const fm = FileManager.iCloud();
-const path = fm.joinPath(fm.documentsDirectory(), "taches.json");
-let tasks = [];
-if (fm.fileExists(path)) {
-  try { tasks = JSON.parse(fm.readString(path)); } catch(e) {}
+  document.querySelectorAll('.nav-btn').forEach(btn => {
+    btn.classList.toggle('active', btn.dataset.view === v);
+  });
+
+  if (v === 'list') renderList();
 }
 
-const w = new ListWidget();
-w.backgroundColor = new Color("#13131a");
-w.setPadding(14, 16, 14, 16);
-
-const title = w.addText("Mes tâches");
-title.font = Font.boldSystemFont(16);
-title.textColor = new Color("#c8f064");
-w.addSpacer(8);
-
-const pending = tasks.filter(t => !t.done).slice(0, 5);
-if (pending.length === 0) {
-  const none = w.addText("✓ Tout est fait !");
-  none.font = Font.systemFont(13);
-  none.textColor = new Color("#aaaaaa");
-} else {
-  for (const t of pending) {
-    const row = w.addText("• " + t.text);
-    row.font = Font.systemFont(13);
-    row.textColor = new Color("#f0f0f5");
-    row.lineLimit = 1;
-    w.addSpacer(4);
-  }
-}
-
-w.addSpacer();
-const footer = w.addText(pending.length + " restante" + (pending.length !== 1 ? "s" : ""));
-footer.font = Font.systemFont(10);
-footer.textColor = new Color("#666666");
-footer.rightAlignText();
-
-Script.setWidget(w);
-w.presentSmall();
-Script.complete();
-`;
-}
-
-// ── Wire up all buttons ────────────────────────────────────────────────────
-document.getElementById('addBtn').addEventListener('click', addTask);
-
-document.getElementById('taskInput').addEventListener('keydown', e => {
-  if (e.key === 'Enter') addTask();
-});
-
-document.getElementById('filterBar').querySelectorAll('.filter-btn').forEach(btn => {
+// ── Filter wiring ──────────────────────────────────────────────────────────
+document.getElementById('filters').querySelectorAll('.filter-btn').forEach(btn => {
   btn.addEventListener('click', () => {
     filter = btn.dataset.filter;
     document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
     btn.classList.add('active');
-    renderTasks();
+    renderList();
   });
 });
 
-document.getElementById('navClear').addEventListener('click', () => {
-  if (tasks.some(t => t.done)) {
-    tasks = tasks.filter(t => !t.done);
-    save();
-    renderTasks();
-  }
+// ── Nav wiring ─────────────────────────────────────────────────────────────
+document.querySelectorAll('.nav-btn').forEach(btn => {
+  btn.addEventListener('click', () => switchView(btn.dataset.view));
 });
 
-document.getElementById('exportBtn').addEventListener('click', exportToiCloud);
+// ── Theme wiring ───────────────────────────────────────────────────────────
+document.getElementById('themeBtn').addEventListener('click', toggleTheme);
 
-document.getElementById('copyScriptableBtn').addEventListener('click', () => {
-  const code = getScriptableCode();
-  if (navigator.clipboard) {
-    navigator.clipboard.writeText(code).then(() => {
-      const btn = document.getElementById('copyScriptableBtn');
-      btn.textContent = '✅ Copié !';
-      setTimeout(() => { btn.textContent = '📋 Copier le script Scriptable'; }, 2000);
-    });
-  } else {
-    const ta = document.createElement('textarea');
-    ta.value = code;
-    document.body.appendChild(ta);
-    ta.select();
-    document.execCommand('copy');
-    document.body.removeChild(ta);
-    const btn = document.getElementById('copyScriptableBtn');
-    btn.textContent = '✅ Copié !';
-    setTimeout(() => { btn.textContent = '📋 Copier le script Scriptable'; }, 2000);
-  }
-});
+// ── Form wiring ────────────────────────────────────────────────────────────
+document.getElementById('taskForm').addEventListener('submit', handleSubmit);
 
 // ── Init ───────────────────────────────────────────────────────────────────
-buildCatBar();
-renderTasks();
+renderThemeIcon();
+switchView('list');
 
 // ── Service Worker ─────────────────────────────────────────────────────────
 if ('serviceWorker' in navigator) {
